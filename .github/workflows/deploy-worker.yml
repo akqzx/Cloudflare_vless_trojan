@@ -10,6 +10,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: cat Vless_workers_pages/_worker.js
+         run：cat Vless_workers_pages/_worker.js
       - name: Deploy to Cloudflare Workers
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
