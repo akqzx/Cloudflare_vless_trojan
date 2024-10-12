@@ -1,23 +1,28 @@
 name: Deploy to Cloudflare Workers
 
+# 触发条件，这里设置为推送到 main 分支时触发
 on:
   push:
     branches:
-      - main  # 每当推送到 main 分支时触发部署
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # 检出代码仓库
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      # 安装 Wrangler CLI
       - name: Install Wrangler
-        run: npm install -g wrangler  # 安装 wrangler
+        run: npm install -g @cloudflare/wrangler
 
-      - name: Deploy to Cloudflare Workers
-        run: wrangler deploy Vless_workers_pages/_worker.js  # 部署指定文件
+      # 登录到 Cloudflare
+      - name: Authenticate with Cloudflare
+        run: wrangler login --api-token ${{ secrets.CF_API_TOKEN }}
+
+      # 发布 Worker
+      - name: Publish Worker
+        run: wrangler publish --script Vless_workers_pages/_worker.js --name stash
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}  # 从 GitHub Secrets 获取
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}  # 从 GitHub Secrets 获取
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
