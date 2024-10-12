@@ -9,16 +9,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Verify source file exists
-        run: ls -la Vless_workers_pages/
       - name: Copy specific file
-        run: cp Vless_workers_pages/_worker.js ~/deployed-worker.js
-      - name: Verify copied file exists
-        run: ls -la ~/deployed-worker.js
-      - name: Verify copied file
-        run: cat ~/deployed-worker.js
+        run: cp Vless_workers_pages/_worker.js /tmp/deployed-worker.js
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          entryPoint: ~/deployed-worker.js
+          # 修改这里，不再指定为可执行文件，而是文件路径即可
+          entryPoint: /tmp/deployed-worker.js
