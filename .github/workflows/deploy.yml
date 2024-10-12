@@ -1,9 +1,9 @@
-name: Deploy Worker
+name: Deploy Cloudflare Worker
 
 on:
   push:
     branches:
-      - main  # 或者你希望的其他分支
+      - main  # 根据你的主分支设置
 
 jobs:
   deploy:
@@ -16,13 +16,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # 选择所需的 Node.js 版本
+          node-version: '18'  # 设置 Node.js 版本
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Wrangler
+        run: npm install -g wrangler
 
-      - name: Deploy to Cloudflare Workers
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}  # 你的 Cloudflare API Token
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}  # 你的 Cloudflare 账户 ID
-        run: npx wrangler deploy _worker.js --compatibility-date $(date +%Y-%m-%d) --name "stash"
+      - name: Deploy Worker
+        run: npx wrangler deploy Vless_workers_pages/_worker.js --compatibility-date $(date +%Y-%m-%d) --name "stash"
+
