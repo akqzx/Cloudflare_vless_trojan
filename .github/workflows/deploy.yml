@@ -3,7 +3,7 @@ name: Deploy Specific File to Cloudflare Workers
 on:
   push:
     branches:
-      - main  # 当main分支推送时触发
+      - main
 
 jobs:
   deploy:
@@ -15,13 +15,12 @@ jobs:
 
       - name: Copy specific file to workspace
         run: cp Vless_workers_pages/_worker.js ./specific-file.js
-        # 将文件复制到当前工作目录
+
+      - name: Set file permissions
+        run: chmod +x ./specific-file.js  # 确保文件有执行权限
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workerName: stash  # Cloudflare Worker 的名称
-          modules: true  # 表示该 Worker 使用模块化 JavaScript
           entryPoint: ./specific-file.js  # 部署文件路径
