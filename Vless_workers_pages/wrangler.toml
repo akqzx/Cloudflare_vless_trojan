@@ -1,0 +1,9 @@
+name = "stash" # 你的 Worker 名称
+type = "javascript"
+
+account_id = "98e7af6b95135de3d4b1bc92e14682de" # 你的 Cloudflare 账户 ID
+workers_dev = true # 是否使用 workers.dev 子域名
+
+[build.upload]
+format = "service-worker"
+compatibility_date = "2024-10-12"
