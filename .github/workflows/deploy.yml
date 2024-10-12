@@ -16,8 +16,9 @@ jobs:
       - name: Copy specific file to workspace
         run: cp Vless_workers_pages/_worker.js ./specific-file.js
 
-      - name: Set file permissions
-        run: chmod +x ./specific-file.js  # 确保文件有执行权限
+      # 不再需要为文件设置执行权限，因为它不会直接被执行
+      # - name: Set file permissions
+      #   run: chmod +x ./specific-file.js
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@1.3.0
