@@ -1,22 +1,27 @@
 name: Deploy Specific File to Cloudflare Workers
+
 on:
   push:
     branches:
-      - main
+      - main  # 当main分支推送时触发
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Copy specific file
-        run: cp Vless_workers_pages/_worker.js /tmp/specific-file.js
-        # 将 <path-to-specific-file> 替换为你指定文件的相对路径，比如 src/special-code.js
+
+      - name: Copy specific file to workspace
+        run: cp Vless_workers_pages/_worker.js ./specific-file.js
+        # 将文件复制到当前工作目录
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workerName: stash
-          modules: true
-          entryPoint: /tmp/specific-file.js
+          workerName: stash  # Cloudflare Worker 的名称
+          modules: true  # 表示该 Worker 使用模块化 JavaScript
+          entryPoint: ./specific-file.js  # 部署文件路径
