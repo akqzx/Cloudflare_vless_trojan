@@ -1,38 +1,78 @@
-name: Deploy to Cloudflare Workers
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Install Volta
-      run: curl https://get.volta.sh | bash -e
-
-    - name: Initialize Volta
-      run: |
-        echo "export VOLTA_HOME=$HOME/.volta" >> $GITHUB_ENV
-        echo "export PATH=$PATH:$HOME/.volta/bin" >> $GITHUB_ENV
-        echo "volta install node" >> $GITHUB_PATH
-
-    - name: Install Node.js
-      run: |
-        volta install node
-
-    - name: Authenticate with Cloudflare
-      run: |
-        echo "//pika.cloudflare.com/:_authToken=${{ secrets.CF_API_TOKEN }}" > ~/.npmrc
-
-    - name: Publish to Cloudflare Workers
-      run: |
-        npx wrangler kv:namespace create MY_KV_NAMESPACE
-        npx wrangler publish --name stash
-      env:
-        CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+name: Deploy Cloudflare Worker  
+  
+on:  
+  push:  
+    branches:  
+      - main  # 根据你的主分支名称进行调整  
+  
+jobs:  
+  deploy:  
+    runs-on: ubuntu-latest  
+  
+    steps:  
+      - name: Checkout code  
+        uses: actions/checkout@v2  
+  
+      - name: Read _worker.js file  
+        id: read_worker_file  
+        run: echo "::set-output name=content::$(cat Vless_workers_pages/_worker.js | base64)"  
+  
+      - name: Deploy to Cloudflare Workers  
+        env:  
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}  
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}  
+        run: |  
+          SCRIPT_BASE64=${{ steps.read_worker_file.outputs.content }}  
+          SCRIPT_PLAIN=$(echo "$SCRIPT_BASE64" | base64 --decode)  
+            
+          # Create or update the worker  
+          RESPONSE=$(curl -s -X POST \  
+            -H "X-Auth-Email: your-cloudflare-email@example.com" \  
+            -H "X-Auth-Key: $CF_API_TOKEN" \  
+            -H "Content-Type: application/json" \  
+            -d '{  
+              "name": "stash",  
+              "script": "$SCRIPT_PLAIN",  
+              "account_id": "$CF_ACCOUNT_ID"  
+            }' \  
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/scripts")  
+            
+          # Parse the response  
+          echo "$RESPONSE" | jq '.'  
+            
+          # Check for errors in the response  
+          if [[ $(echo "$RESPONSE" | jq -r '.success') != "true" ]]; then  
+            echo "Error deploying worker: $(echo "$RESPONSE" | jq -r '.errors[0].message')"  
+            exit 1  
+          fi  
+  
+          echo "Worker deployed successfully!"  
+  
+        # Note: You may need to install jq to parse JSON in the shell script.  
+        # You can add a step to install jq if it's not already available.  
+  
+      # Optional: Install jq if it's not already available  
+      # - name: Install jq  
+      #   run: sudo apt-get install jq -y  
+  
+      # Note: The above curl command includes your Cloudflare email for authentication,  
+      # but it's recommended to use the API token only for authentication purposes.  
+      # The email is included here for completeness, but in a real scenario,  
+      # you should rely solely on the API token for authentication.  
+      # However, Cloudflare's API documentation may indicate that only the token is needed.  
+      # Adjust the headers accordingly based on the latest Cloudflare API documentation.  
+  
+      # Important: The above script assumes that you have the necessary permissions  
+      # to create or update workers in the specified Cloudflare account.  
+      # Also, make sure to replace "your-cloudflare-email@example.com" with your actual Cloudflare email  
+      # or remove the email-related header if it's not required by the API.  
+  
+      # Additionally, the script uses base64 encoding to safely pass the script content  
+      # through the environment variables in GitHub Actions.  
+      # This is necessary because environment variables in GitHub Actions  
+      # are not designed to handle multiline strings directly.  
+  
+      # Finally, note that the above curl command is a simplified example.  
+      # In a production environment, you should handle errors, retries, and other edge cases  
+      # more robustly. Also, consider using a more advanced tool or library  
+      # for interacting with the Cloudflare API if needed.
