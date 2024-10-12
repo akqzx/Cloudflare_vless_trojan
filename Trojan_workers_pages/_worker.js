@@ -1,4 +1,4 @@
-// src/worker.js
+// src/ worker.js
 import { connect } from "cloudflare:sockets";
  
 let Pswd = "trojan";
