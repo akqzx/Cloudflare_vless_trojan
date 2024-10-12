@@ -9,8 +9,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
       - name: Copy specific file
         run: cp Vless_workers_pages/_worker.js /tmp/specific-file.js
         # 将 <path-to-specific-file> 替换为你指定文件的相对路径，比如 src/special-code.js
