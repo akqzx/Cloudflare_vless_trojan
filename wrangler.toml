@@ -1,4 +1,4 @@
 name = "stash"  # 替换为您的 Cloudflare Worker 名称
-account_id = "$CLOUDFLARE_ACCOUNT_ID"  # 您的 Cloudflare 账户 ID
-workers_dev = true  # 如果您正在使用开发环境
-compatibility_date = "2024-10-11"  # 将此日期设置为今天或您的兼容性日期
+account_id = "$CF_ACCOUNT_ID"  # 替换为您的 Cloudflare 账户 ID
+workers_dev = true  # 如果使用开发环境
+compatibility_date = "2024-10-11"  # 当前日期或任何需要的兼容性日期
