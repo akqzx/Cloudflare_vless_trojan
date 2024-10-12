@@ -1,0 +1,4 @@
+name = "stash"  # 替换为您的 Cloudflare Worker 名称
+type = "javascript"  # 可以根据您的 Worker 类型进行调整
+account_id = "$CLOUDFLARE_ACCOUNT_ID"  # 使用您的 Cloudflare 账户 ID
+workers_dev = true  # 在开发环境中使用
