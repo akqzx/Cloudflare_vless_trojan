@@ -33,20 +33,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF163_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
         run: npx wrangler deploy Vless_workers_pages/_worker.js --compatibility-date $(date +%Y-%m-%d) --name "163"
 
-  # Cleanup job to remove old workflow runs
+  # Cleanup old workflow runs
   cleanup:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Install GitHub CLI
-        run: sudo apt-get install gh -y
-
-      - name: Cleanup old workflow runs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # List workflow runs and remove all but the latest 5
-          gh run list --limit 100 --workflow=Deploy_Cloudflare_Worker \
-            | tail -n +6 \
-            | awk '{print $1}' \
-            | xargs -I % gh run delete % -y
+      - name: Delete old workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          keep_minimum_runs: 5  # 保留最近 5 次运行
