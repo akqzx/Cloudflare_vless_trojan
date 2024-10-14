@@ -27,3 +27,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
         run: npx wrangler deploy Vless_workers_pages/_worker.js --compatibility-date $(date +%Y-%m-%d) --name "stash"
 
+      - name: Deploy 163 Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF163_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF163_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/_worker.js --compatibility-date $(date +%Y-%m-%d) --name "163"
+
+
