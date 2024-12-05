@@ -1,0 +1,53 @@
+#name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches:
+      - main  # 根据你的主分支设置
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'  # 设置 Node.js 版本
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+
+      - name: Deploy hhxd Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/hx_worker.js --compatibility-date $(date +%Y-%m-%d) --name "stash" --no-bundle
+
+      - name: Deploy 163 Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF163_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF163_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/hx_worker.js --compatibility-date $(date +%Y-%m-%d) --name "163" --no-bundle
+
+      - name: Deploy LIUYI Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.LIUYI_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.LIUYI_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/hx_worker.js --compatibility-date $(date +%Y-%m-%d) --name "a" --no-bundle
+
+      - name: Deploy LMZ Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.LMZ_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.LMZ_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/hx_worker.js --compatibility-date $(date +%Y-%m-%d) --name "lmz" --no-bundle
+
+      - name: Deploy LMZF1 Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.LMZF1_API_TOKEN }}  # 从 Secrets 获取 API Token
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.LMZF1_ACCOUNT_ID }}  # 从 Secrets 获取 API Token
+        run: npx wrangler deploy Vless_workers_pages/hx_worker.js --compatibility-date $(date +%Y-%m-%d) --name "a" --no-bundle
